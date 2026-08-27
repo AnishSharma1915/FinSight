@@ -6,8 +6,9 @@ from datetime import datetime, timezone
 dynamodb = boto3.resource("dynamodb")
 lambda_client = boto3.client("lambda")
 
-table = dynamodb.Table("FinSight-PaymentRequests")
-
+table = dynamodb.Table(
+    os.environ["PAYMENT_REQUEST_TABLE"]
+)    
 
 def lambda_handler(event, context):
     try:
@@ -58,7 +59,7 @@ def lambda_handler(event, context):
 
         # Invoke Risk Engine
         lambda_client.invoke(
-            FunctionName="FinSight-RiskEngine",
+            FunctionName=os.environ["RISK_ENGINE_FUNCTION_ARN"],
             InvocationType="RequestResponse",
             Payload=json.dumps(risk_engine_payload).encode("utf-8")
         )
