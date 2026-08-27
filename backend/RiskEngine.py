@@ -1,24 +1,29 @@
 import json
+import os
 import boto3
 from decimal import Decimal
 from datetime import datetime
 
-# ---------------------------------------------------------
-# AWS RESOURCES
-# ---------------------------------------------------------
-
 dynamodb = boto3.resource("dynamodb")
 sns = boto3.client("sns")
 
-payment_table = dynamodb.Table("FinSight-PaymentRequests")
-vbp_table = dynamodb.Table("FinSight-VendorBehaviourProfiles")
-risk_table = dynamodb.Table("FinSight-RiskAssessments")
-historical_table = dynamodb.Table("FinSight-HistoricalTransactions")
+payment_table = dynamodb.Table(
+    os.environ["PAYMENT_REQUEST_TABLE"]
+)
 
-# Replace this after creating the SNS topic
-SNS_TOPIC_ARN = "YOUR_SNS_TOPIC_ARN"
+vbp_table = dynamodb.Table(
+    os.environ["VBP_TABLE"]
+)
 
+risk_table = dynamodb.Table(
+    os.environ["RISK_ASSESSMENT_TABLE"]
+)
 
+historical_table = dynamodb.Table(
+    os.environ["HISTORICAL_TABLE"]
+)
+
+SNS_TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
 # ---------------------------------------------------------
 # AMOUNT RISK
 # ---------------------------------------------------------
@@ -323,14 +328,10 @@ Please review this transaction in the Finance Review Dashboard.
 """
 
             sns.publish(
-
-                TopicArn="arn:aws:sns:ap-south-1:589833671009:FinSight-FinanceReview",
-
-                Subject="FinSight - Payment Requires Review",
-
-                Message=message
-            )
-
+    TopicArn=SNS_TOPIC_ARN,
+    Subject="FinSight - Payment Requires Review",
+    Message=message
+)
 
         # -------------------------------------------------
         # 13. RESPONSE
