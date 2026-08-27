@@ -1,10 +1,12 @@
 import json
+import os
 import boto3
 
 dynamodb = boto3.resource("dynamodb")
 
-risk_table = dynamodb.Table("FinSight-RiskAssessments")
-
+risk_table = dynamodb.Table(
+    os.environ["RISK_ASSESSMENT_TABLE"]
+)
 
 def lambda_handler(event, context):
 
