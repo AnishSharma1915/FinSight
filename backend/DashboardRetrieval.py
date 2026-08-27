@@ -1,21 +1,21 @@
 import json
+import os
 import boto3
 from decimal import Decimal
 
 dynamodb = boto3.resource("dynamodb")
 
 historical_table = dynamodb.Table(
-    "FinSight-HistoricalTransactions"
+    os.environ["HISTORICAL_TABLE"]
 )
 
 risk_table = dynamodb.Table(
-    "FinSight-RiskAssessments"
+    os.environ["RISK_ASSESSMENT_TABLE"]
 )
 
 payment_table = dynamodb.Table(
-    "FinSight-PaymentRequests"
+    os.environ["PAYMENT_REQUEST_TABLE"]
 )
-
 
 def decimal_to_number(value):
     if isinstance(value, Decimal):
